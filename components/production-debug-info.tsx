@@ -98,7 +98,7 @@ export function ProductionDebugInfo() {
                         <div className="ml-2 space-y-1">
                             <div>ID: {session.user.id}</div>
                             <div>Email: {session.user.email}</div>
-                            <div>Cookies: {document.cookie ? '✅' : '❌'}</div>
+                            <div>Cookies: ✅ (Session active)</div>
                         </div>
                     </div>
                 )}
