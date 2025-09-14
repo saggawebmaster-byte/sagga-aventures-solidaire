@@ -1,5 +1,6 @@
 import { LoginForm } from "@/components/login-form"
 import { AuthLayout } from "@/components/auth-layout"
+import { ProductionDebugInfo } from "@/components/production-debug-info"
 import Link from "next/link"
 
 export default function AuthLoginPage() {
@@ -21,6 +22,9 @@ export default function AuthLoginPage() {
         </Link>
       </p>
       </div> */}
+
+      {/* Composant de debug pour la production */}
+      {process.env.NODE_ENV === 'production' && <ProductionDebugInfo />}
     </AuthLayout>
   )
 }

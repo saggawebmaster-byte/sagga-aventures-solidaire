@@ -36,6 +36,17 @@ export const auth = betterAuth({
       },
     },
   },
+  callbacks: {
+    session: {
+      jwt: async ({ session, user }: { session: any; user: any }) => {
+        // Inclure le rôle dans la session JWT
+        if (user?.role) {
+          session.user.role = user.role;
+        }
+        return session;
+      },
+    },
+  },
   secret: process.env.BETTER_AUTH_SECRET || "your-secret-key-here-make-it-32-chars-minimum",
   baseURL: process.env.BETTER_AUTH_URL || "http://localhost:3000",
 });

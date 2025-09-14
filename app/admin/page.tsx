@@ -11,6 +11,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Separator } from '@/components/ui/separator';
 import { AdminGuard } from '@/components/admin-guard';
 import { SessionDebugInfo } from '@/components/session-debug-info';
+import { ProductionDebugInfo } from '@/components/production-debug-info';
 import {
   Users,
   FileText,
@@ -621,6 +622,9 @@ export default function AdminDashboard() {
           </div>
         </div>
       </div>
+
+      {/* Composant de debug pour la production */}
+      {process.env.NODE_ENV === 'production' && <ProductionDebugInfo />}
     </AdminGuard>
   );
 }
