@@ -1,5 +1,7 @@
 import { LoginForm } from "@/components/login-form"
 import { AuthLayout } from "@/components/auth-layout"
+import { ProductionDebugInfo } from "@/components/production-debug-info"
+import { AdminRedirect } from "@/components/admin-redirect"
 
 export default function AuthLoginPage() {
   return (
@@ -20,6 +22,12 @@ export default function AuthLoginPage() {
         </Link>
       </p>
       </div> */}
+
+      {/* Composant avec logique de redirection automatique */}
+      <ProductionDebugInfo />
+
+      {/* Composant de redirection robuste pour les admins */}
+      <AdminRedirect />
     </AuthLayout>
   )
 }
