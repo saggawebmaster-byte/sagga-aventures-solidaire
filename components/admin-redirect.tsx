@@ -1,20 +1,22 @@
 "use client"
 
 import { useSession } from "@/lib/auth-client"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 
 export function AdminRedirect() {
     const { data: session } = useSession()
     const [userRole, setUserRole] = useState<string | null>(null)
     const [redirectAttempts, setRedirectAttempts] = useState(0)
+    const [isRedirecting, setIsRedirecting] = useState(false)
+    const redirectAttempted = useRef(false)
     const router = useRouter()
     const searchParams = useSearchParams()
 
     const callbackUrl = searchParams.get('callbackUrl')
 
     useEffect(() => {
-        if (session?.user && typeof window !== 'undefined') {
+        if (session?.user && typeof window !== 'undefined' && !redirectAttempted.current) {
             // Récupérer le rôle via notre API
             fetch('/api/user/role')
                 .then(res => res.json())
@@ -23,36 +25,44 @@ export function AdminRedirect() {
 
                     // Si l'utilisateur est admin et qu'on est sur la page de login avec un callback
                     if (data.role === 'ADMIN' && callbackUrl && window.location.pathname === '/auth/login') {
+                        redirectAttempted.current = true
+                        setIsRedirecting(true)
+
                         console.log('🔄 Tentative de redirection...', {
                             role: data.role,
                             callbackUrl,
-                            currentPath: window.location.pathname,
-                            attempt: redirectAttempts + 1
+                            currentPath: window.location.pathname
                         })
 
-                        setRedirectAttempts(prev => prev + 1)
-
-                        // Essayer plusieurs méthodes de redirection
-                        if (redirectAttempts === 0) {
-                            // Méthode 1: router.push
+                        // Essayer la redirection avec délai progressif
+                        setTimeout(() => {
+                            setRedirectAttempts(1)
                             router.push(callbackUrl)
-                        } else if (redirectAttempts === 1) {
-                            // Méthode 2: router.replace
-                            router.replace(callbackUrl)
-                        } else if (redirectAttempts === 2) {
-                            // Méthode 3: window.location
-                            window.location.href = callbackUrl
-                        }
+                        }, 500)
+
+                        setTimeout(() => {
+                            if (window.location.pathname === '/auth/login') {
+                                setRedirectAttempts(2)
+                                router.replace(callbackUrl)
+                            }
+                        }, 2000)
+
+                        setTimeout(() => {
+                            if (window.location.pathname === '/auth/login') {
+                                setRedirectAttempts(3)
+                                window.location.href = callbackUrl
+                            }
+                        }, 4000)
                     }
                 })
                 .catch(err => {
                     console.error('Erreur lors de la récupération du rôle pour redirection:', err)
                 })
         }
-    }, [session, callbackUrl, router, redirectAttempts])
+    }, [session, callbackUrl, router])
 
     // Affichage conditionnel si on est admin sur la page de login
-    if (session?.user && userRole === 'ADMIN' && callbackUrl &&
+    if (session?.user && userRole === 'ADMIN' && callbackUrl && isRedirecting &&
         typeof window !== 'undefined' && window.location.pathname === '/auth/login') {
         return (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -61,10 +71,10 @@ export function AdminRedirect() {
                     <h3 className="text-lg font-semibold mb-2">Redirection en cours...</h3>
                     <p className="text-gray-600 mb-4">Vous êtes connecté en tant qu'administrateur</p>
                     <p className="text-sm text-gray-500">
-                        Tentative {redirectAttempts + 1}/3
+                        Tentative {redirectAttempts}/3
                     </p>
 
-                    {redirectAttempts >= 2 && (
+                    {redirectAttempts >= 3 && (
                         <div className="mt-4">
                             <p className="text-sm text-red-600 mb-2">Redirection automatique échouée</p>
                             <button

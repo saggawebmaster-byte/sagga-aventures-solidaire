@@ -7,28 +7,32 @@ export default async function middleware(request: NextRequest) {
 
   // Routes qui nécessitent une authentification
   const protectedRoutes = ['/dashboard']
-  // Routes qui nécessitent le rôle admin
-  const adminRoutes = ['/admin']
+  
+  // Routes admin : laisser AdminGuard s'en occuper côté client pour éviter les conflits de redirection
+  // const adminRoutes = ['/admin'] // Temporairement désactivé
   
   // Vérifier si la route actuelle est protégée
   const isProtectedRoute = protectedRoutes.some(route => 
     pathname.startsWith(route)
   )
   
-  const isAdminRoute = adminRoutes.some(route => 
-    pathname.startsWith(route)
-  )
+  // Désactiver temporairement la protection middleware pour /admin
+  const isAdminRoute = false
 
   if (isProtectedRoute || isAdminRoute) {
     // Vérifier la présence du cookie de session Better Auth
-    const sessionCookie = request.cookies.get('better-auth.session_token') || 
+    // Better Auth utilise des noms de cookies spécifiques selon l'environnement
+    const sessionCookie = request.cookies.get('__Secure-better-auth.session_token') || // Production HTTPS
+                         request.cookies.get('better-auth.session_token') ||          // Local HTTP
                          request.cookies.get('better-auth.session') ||
                          request.cookies.get('session_token') ||
                          request.cookies.get('session')
 
     console.log('🔍 Middleware check:', {
       pathname,
+      cookies: request.cookies.getAll().map(c => c.name), // Log tous les cookies
       hasSessionCookie: !!sessionCookie,
+      sessionCookieName: sessionCookie?.name,
       isAdminRoute,
       isProtectedRoute
     })
