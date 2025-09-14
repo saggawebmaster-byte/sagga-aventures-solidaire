@@ -1,4 +1,4 @@
-// Prisma schema for production (PostgreSQL)
+// Prisma schema for development (SQLite)
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
@@ -7,8 +7,8 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = "file:./dev.db"
 }
 
 // Modèles d'authentification
