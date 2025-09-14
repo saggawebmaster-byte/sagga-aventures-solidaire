@@ -86,13 +86,10 @@ const Navigation = () => {
                     <span>Admin</span>
                   </Link>
                 </AdminLink>
-                <Link
-                  href="/dashboard"
-                  className="flex items-center space-x-2 text-sm text-gray-700 hover:text-[#752D8B]"
-                >
+                <div className="flex items-center space-x-2 text-sm text-gray-700">
                   <User className="h-4 w-4" />
                   <span>{session.user.name || session.user.email}</span>
-                </Link>
+                </div>
                 <Button
                   onClick={handleSignOut}
                   variant="outline"
@@ -163,14 +160,10 @@ const Navigation = () => {
               <div className="border-t border-gray-200 pt-4">
                 {session ? (
                   <div className="space-y-2">
-                    <Link
-                      href="/dashboard"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="flex items-center space-x-3 px-3 py-3 text-base font-medium text-gray-600 hover:text-[#752D8B] hover:bg-purple-50 rounded-md"
-                    >
+                    <div className="flex items-center space-x-3 px-3 py-3 text-base font-medium text-gray-600">
                       <User className="h-5 w-5" />
-                      <span>Tableau de bord</span>
-                    </Link>
+                      <span>{session.user.name || session.user.email}</span>
+                    </div>
                     <button
                       onClick={() => {
                         handleSignOut();
