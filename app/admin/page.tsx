@@ -623,8 +623,8 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {/* Composant de debug pour la production */}
-      {process.env.NODE_ENV === 'production' && <ProductionDebugInfo />}
+      {/* Debug temporaire - sera retiré en production finale */}
+      {process.env.NODE_ENV === 'development' && <ProductionDebugInfo />}
     </AdminGuard>
   );
 }
