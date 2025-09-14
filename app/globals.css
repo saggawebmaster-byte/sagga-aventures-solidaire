@@ -1,0 +1,143 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  }
+}
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 3.9%;
+    --primary: 288 55% 32%; /* #752D8B */
+    --primary-foreground: 0 0% 98%;
+    --secondary: 288 25% 95%;
+    --secondary-foreground: 288 55% 32%;
+    --muted: 288 10% 96%;
+    --muted-foreground: 0 0% 45.1%;
+    --accent: 288 30% 90%;
+    --accent-foreground: 288 55% 32%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 288 15% 89.8%;
+    --input: 288 15% 89.8%;
+    --ring: 288 55% 32%;
+    --chart-1: 288 55% 32%;
+    --chart-2: 288 45% 45%;
+    --chart-3: 288 35% 60%;
+    --chart-4: 288 25% 75%;
+    --chart-5: 288 15% 85%;
+    --radius: 0.75rem;
+  }
+  .dark {
+    --background: 288 45% 8%;
+    --foreground: 0 0% 98%;
+    --card: 288 45% 8%;
+    --card-foreground: 0 0% 98%;
+    --popover: 288 45% 8%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 288 55% 45%;
+    --primary-foreground: 288 45% 8%;
+    --secondary: 288 30% 15%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 288 30% 15%;
+    --muted-foreground: 0 0% 63.9%;
+    --accent: 288 30% 15%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 288 30% 20%;
+    --input: 288 30% 20%;
+    --ring: 288 55% 45%;
+    --chart-1: 288 55% 45%;
+    --chart-2: 288 45% 55%;
+    --chart-3: 288 35% 65%;
+    --chart-4: 288 25% 75%;
+    --chart-5: 288 15% 85%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Custom animations and styles for auth pages */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse-subtle {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+.auth-page-enter {
+  animation: fade-in-up 0.6s ease-out;
+}
+
+.auth-logo-pulse {
+  animation: pulse-subtle 3s ease-in-out infinite;
+}
+
+/* Enhanced focus states for auth forms */
+.auth-input:focus {
+  box-shadow: 0 0 0 2px hsl(var(--primary) / 0.2);
+  border-color: hsl(var(--primary));
+}
+
+/* Gradient overlay pattern */
+.auth-gradient-overlay {
+  background: linear-gradient(135deg, 
+    hsl(var(--primary) / 0.1) 0%, 
+    hsl(var(--primary) / 0.05) 50%, 
+    transparent 100%);
+}
+
+/* Custom scrollbar for auth pages */
+.auth-page::-webkit-scrollbar {
+  width: 6px;
+}
+
+.auth-page::-webkit-scrollbar-track {
+  background: hsl(var(--muted));
+}
+
+.auth-page::-webkit-scrollbar-thumb {
+  background: hsl(var(--primary) / 0.3);
+  border-radius: 3px;
+}
+
+.auth-page::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--primary) / 0.5);
+}

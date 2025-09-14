@@ -1,0 +1,58 @@
+aide moi à implémenter cette logique/workflow d'envoie des  demandes saisi via le formulaire à (aux) l'addresse(s) correspondante
+
+
+j'aimerais que la demande par défaut (si  AAU non coché) soit envoyé à l'adresse mail de la structure correspande à la ville selectionné
+
+CORRESPONDANCES Structures
+- Cayenne : tidegra@sagga.fr	
+- Saint-Laurent : tibakicsi@gmail.com	 
+- Macouria : contact.a3pguyane@gmail.com	
+
+
+
+Et si AAU envoyé la demande plutôt à la (les) addresse(s) mail(s) du CCAS de la ville selectionné correspondante : 
+
+CORRESPONDANCES  CCAS
+- Cayenne:
+direction@ccas-cayenne.org, 
+coordinatriceaau@ccas cayenne.org	
+
+- Macouria:
+alsainteluce@ccasmacouria.fr	
+ccas.rm.lpulcherie@orange.fr, 
+ccas.rm.simonnet@orange.fr, 
+
+- Remire:
+ccas.rm.stanislas@orange.fr,	
+ccas.rm.albertrogier@orange.frccas@mairie-matoury.fr,
+ccasmt@orange.fr,
+
+- Matoury:
+line.atticot@mairie-matoury.fr,	
+nicole.gomes-caldas@roura.gf, 
+centresocio.roura@orange.fr, 
+
+- Roura:
+mariechantal.dominique@roura.gf	,
+henriol.murielle@ctguyane.fr ,
+
+- Kourou:
+jeanne.varlin@ciass-guyane.fr,
+virginie.dias@ciass guyane.fr	
+line.bourdon@montsinery-tonnegrande.fr, 
+celly.popo@montsinery-tonnegrande.fr, 
+
+- Montsinéry:
+yannis.manguer@montsinery-tonnegrande.fr,	 
+ccas97320c.nanhou@orange.fr, 
+
+- Saint-Laurent
+ccas97320educateur1@orange.fr,	
+
+- Mana:
+ccas.mana@orange.fr, 
+bazilie@mairie-mana.fr	
+
+- Iracoubo:
+louise.alexis@ctguyane.fr, 
+accueil.iracoubo@gmail.fr	

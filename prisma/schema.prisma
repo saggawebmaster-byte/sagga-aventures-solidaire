@@ -1,0 +1,137 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+// Modèles d'authentification
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified Boolean   @default(false)
+  image         String?
+  role          String    @default("USER") // USER, ADMIN
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  accounts      Account[]
+  sessions      Session[]
+
+  @@map("users")
+}
+
+model Account {
+  id                String   @id @default(cuid())
+  accountId         String   @unique
+  userId            String
+  providerId        String
+  type              String   @default("credential")
+  password          String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("accounts")
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  expiresAt DateTime
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+model Demande {
+  id                  String   @id @default(cuid())
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  
+  // Informations personnelles
+  prenom             String
+  nom                String
+  dateNaissance      String
+  sexe               String
+  situation          String
+  email              String
+  telephoneFixe      String?
+  telephonePortable  String?
+  
+  // Adresse
+  adresse            String
+  complementAdresse  String?
+  codePostal         String
+  ville              String   @default("Cayenne")
+  
+  // AAU - Aide Alimentaire d'Urgence
+  aau                Boolean  @default(false)
+  
+  // Commentaires
+  commentaires       String?
+  
+  // Status
+  status             String   @default("ENVOYE") // ENVOYE, TRAITE, A_RELANCER, ARCHIVE
+  
+  // Relations
+  membresfoyer       MembreFoyer[]
+  fichiers           Fichier[]
+  
+  @@map("demandes")
+}
+
+model MembreFoyer {
+  id             String   @id @default(cuid())
+  nom            String
+  prenom         String
+  sexe           String
+  dateNaissance  String
+  
+  // Relation
+  demandeId      String
+  demande        Demande  @relation(fields: [demandeId], references: [id], onDelete: Cascade)
+  
+  @@map("membres_foyer")
+}
+
+model Fichier {
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+  
+  // Informations du fichier
+  nom         String
+  url         String
+  taille      Int
+  type        String
+  categorie   String   // IDENTITE, RESSOURCES, CHARGES
+  
+  // Relation
+  demandeId   String
+  demande     Demande  @relation(fields: [demandeId], references: [id], onDelete: Cascade)
+  
+  @@map("fichiers")
+}
