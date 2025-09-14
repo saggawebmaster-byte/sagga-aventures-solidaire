@@ -43,6 +43,14 @@ export function LoginForm({
           description: "Bienvenue !",
         })
 
+        // Debug: Log the response and current environment
+        console.log('🔍 Debug connexion:', {
+          environment: process.env.NODE_ENV,
+          baseURL: process.env.NEXT_PUBLIC_BETTER_AUTH_URL,
+          currentURL: window.location.href,
+          cookies: document.cookie
+        })
+
         // Force a full page reload to ensure session is properly loaded
         window.location.href = "/admin"
       } catch (err) {

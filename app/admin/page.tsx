@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Separator } from '@/components/ui/separator';
 import { AdminGuard } from '@/components/admin-guard';
+import { SessionDebugInfo } from '@/components/session-debug-info';
 import {
   Users,
   FileText,
