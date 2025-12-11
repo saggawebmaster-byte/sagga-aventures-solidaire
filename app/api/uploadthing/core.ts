@@ -1,6 +1,15 @@
 import { createUploadthing, type FileRouter } from "uploadthing/next";
+import { UploadThingError } from "uploadthing/server";
 
-const f = createUploadthing();
+const f = createUploadthing({
+  errorFormatter: (err) => {
+    console.error("UploadThing Error:", err);
+    return {
+      message: err.message,
+      code: err.code,
+    };
+  },
+});
 
 export const ourFileRouter = {
   documentUploader: f({
@@ -8,9 +17,20 @@ export const ourFileRouter = {
     "image/jpeg": { maxFileSize: "1MB", maxFileCount: 10 },
     "image/png": { maxFileSize: "1MB", maxFileCount: 10 },
     "application/msword": { maxFileSize: "1MB", maxFileCount: 10 },
-    // "application/vnd.openxmlformats-officedocument.wordprocessingml.document": { maxFileSize: "1MB", maxFileCount: 10 },
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document": { maxFileSize: "1MB", maxFileCount: 10 },
   })
-    .middleware(async ({ req }) => {
+    .middleware(async ({ req, files }) => {
+      // Validation de la taille des fichiers
+      for (const file of files) {
+        const maxSize = 1 * 1024 * 1024; // 1MB en bytes
+        if (file.size > maxSize) {
+          throw new UploadThingError({
+            code: "TOO_LARGE",
+            message: `Le fichier "${file.name}" est trop volumineux. Taille maximale autorisée : 1 MB. Taille du fichier : ${(file.size / 1024 / 1024).toFixed(2)} MB.`,
+          });
+        }
+      }
+
       // Vous pouvez ajouter une authentification ici si nécessaire
       return { userId: "anonymous" };
     })

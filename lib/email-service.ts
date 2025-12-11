@@ -126,6 +126,7 @@ interface FormDemandeData {
   codePostal: string;
   aau: boolean;
   commentaires?: string;
+  nombrePersonnesFoyer?: number; // Nouveau champ
   membres?: Array<{
     prenom: string;
     nom: string;
@@ -261,7 +262,7 @@ function generateEmailTemplate(demande: FormDemandeData, destination: any): stri
             <!-- Membres du foyer -->
             ${demande.membres && demande.membres.length > 0 ? `
             <div class="section">
-                <h3>👨‍👩‍👧‍👦 Composition du foyer (${demande.membres.length + 1} personne${demande.membres.length > 0 ? 's' : ''})</h3>
+                <h3>👨‍👩‍👧‍👦 Composition du foyer (${demande.nombrePersonnesFoyer || (demande.membres.length + 1)} personne${(demande.nombrePersonnesFoyer || (demande.membres.length + 1)) > 1 ? 's' : ''})</h3>
                 <div class="field">
                     <label>Demandeur principal</label>
                     <div class="membre-item">

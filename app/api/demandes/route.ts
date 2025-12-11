@@ -18,6 +18,7 @@ const demandeSchema = z.object({
   ville: z.string().default("Apatou"),
   aau: z.boolean().default(false),
   commentaires: z.string().optional(),
+  nombrePersonnesFoyer: z.number().optional(), // Nouveau champ
   membresfoyer: z.array(z.object({
     nom: z.string().min(1),
     prenom: z.string().min(1),
@@ -69,6 +70,9 @@ export async function POST(request: NextRequest) {
 
     // Envoyer la notification email après la création réussie
     try {
+      // Calculer le nombre correct de personnes dans le foyer
+      const nombrePersonnes = validatedData.nombrePersonnesFoyer || (validatedData.membresfoyer?.length || 0) + 1;
+      
       // Adapter les données pour le service email
       const emailData = {
         prenom: validatedData.prenom,
@@ -81,6 +85,7 @@ export async function POST(request: NextRequest) {
         codePostal: validatedData.codePostal,
         situationFamiliale: validatedData.situation,
         nombreEnfants: validatedData.membresfoyer?.length || 0,
+        nombrePersonnesFoyer: nombrePersonnes, // Utiliser le nombre calculé
         sourcesRevenus: [], // Pas de données détaillées dans le formulaire actuel
         montantRevenus: 0,   // Pas de données détaillées dans le formulaire actuel
         chargesLogement: 0,  // Pas de données détaillées dans le formulaire actuel

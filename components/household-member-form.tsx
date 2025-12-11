@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Trash2, Users } from 'lucide-react';
+import DateInput from '@/components/date-input';
 
 export interface HouseholdMember {
   id: string;
@@ -25,25 +26,15 @@ export default function HouseholdMemberForm({ member, onUpdate, onRemove, index 
     onUpdate({ ...member, [field]: value });
   };
 
-  const relationSuggested = index === 0 ? 'Conjoint(e)' : `Enfant ${index}`;
-
   return (
     <div className="flex items-center gap-2 p-3 bg-white rounded-lg border border-gray-200 hover:shadow-sm transition-all">
       <div className="flex items-center bg-[#752D8B]/10 p-2 rounded-full">
         <Users className="h-4 w-4 text-[#752D8B]" />
       </div>
-      
+
       <div className="grid grid-cols-12 gap-3 flex-1">
-        {/* Numéro/type */}
-        <div className="col-span-2 sm:col-span-1">
-          <div className="text-sm font-medium text-[#752D8B] flex items-center h-full">
-            #{index + 1}
-            <span className="hidden sm:inline ml-1 text-xs text-gray-500">({relationSuggested})</span>
-          </div>
-        </div>
-        
         {/* Prénom */}
-        <div className="col-span-5 sm:col-span-3">
+        <div className="col-span-12 sm:col-span-3">
           <div>
             <Input
               id={`prenom-${member.id}`}
@@ -56,9 +47,9 @@ export default function HouseholdMemberForm({ member, onUpdate, onRemove, index 
             />
           </div>
         </div>
-        
+
         {/* Nom */}
-        <div className="col-span-5 sm:col-span-3">
+        <div className="col-span-12 sm:col-span-3">
           <div>
             <Input
               id={`nom-${member.id}`}
@@ -71,9 +62,9 @@ export default function HouseholdMemberForm({ member, onUpdate, onRemove, index 
             />
           </div>
         </div>
-        
+
         {/* Sexe */}
-        <div className="col-span-6 sm:col-span-2">
+        <div className="col-span-12 sm:col-span-2">
           <div>
             <Select value={member.sexe} onValueChange={(value) => handleChange('sexe', value)}>
               <SelectTrigger className="h-9 text-sm">
@@ -86,22 +77,21 @@ export default function HouseholdMemberForm({ member, onUpdate, onRemove, index 
             </Select>
           </div>
         </div>
-        
+
         {/* Date de naissance */}
-        <div className="col-span-6 sm:col-span-3">
+        <div className="col-span-12 sm:col-span-4">
           <div>
-            <Input
+            <DateInput
               id={`dateNaissance-${member.id}`}
-              type="date"
               value={member.dateNaissance}
-              onChange={(e) => handleChange('dateNaissance', e.target.value)}
-              className="h-9 text-sm"
-              required
+              onChange={(value) => handleChange('dateNaissance', value)}
+              placeholder="Date de naissance *"
+              className="h-9"
             />
           </div>
         </div>
       </div>
-      
+
       <Button
         type="button"
         variant="ghost"

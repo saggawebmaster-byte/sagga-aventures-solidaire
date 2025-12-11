@@ -15,8 +15,9 @@ import HouseholdMemberForm, { HouseholdMember } from '@/components/household-mem
 import FileUploadSection, { FileInfo } from '@/components/file-upload-section';
 import FormProgressIndicator from '@/components/form-progress-indicator';
 import HelpSidebar from '@/components/help-sidebar';
+import DateInput from '@/components/date-input';
 import { getAvailableCities, getCodePostalForFormVille } from '@/lib/email-config';
-import { AlertCircle, Plus, Users, DollarSign, Receipt, Send, FileText, Info, Phone, MapPin, User, Calendar, Mail, MessageSquare, ArrowRight, Clock, Heart } from 'lucide-react';
+import { AlertCircle, Plus, Users, DollarSign, Receipt, Send, FileText, Info, Phone, MapPin, User, Mail, MessageSquare, ArrowRight, Clock, Heart } from 'lucide-react';
 import Link from 'next/link';
 
 export default function Demande() {
@@ -37,16 +38,9 @@ export default function Demande() {
     commentaires: ''
   });
 
-  // Initialisation avec un membre par défaut
-  const [householdMembers, setHouseholdMembers] = useState<HouseholdMember[]>(() => [
-    {
-      id: `member-${Date.now()}`,
-      nom: '',
-      prenom: '',
-      sexe: '',
-      dateNaissance: ''
-    }
-  ]);
+  // Initialisation avec 0 membres par défaut
+  // L'utilisateur qui remplit le formulaire compte déjà comme 1 personne
+  const [householdMembers, setHouseholdMembers] = useState<HouseholdMember[]>([]);
   const [identityFiles, setIdentityFiles] = useState<FileInfo[]>([]);
   const [resourceFiles, setResourceFiles] = useState<FileInfo[]>([]);
   const [chargeFiles, setChargeFiles] = useState<FileInfo[]>([]);
@@ -66,6 +60,33 @@ export default function Demande() {
       handleInputChange('ville', availableCities[0].value);
     }
   }, [formData.aau, formData.ville]); // Se déclenche quand le statut AAU ou la ville change
+
+  // Gérer les membres du foyer selon la situation familiale
+  useEffect(() => {
+    const singlePersonSituations = ['celibataire', 'concubinage', 'veuf'];
+
+    if (singlePersonSituations.includes(formData.situation)) {
+      // Pour les situations permettant d'être seul, on vide les membres s'ils sont tous vides
+      // Cela permet de nettoyer quand on passe de "marié" à "célibataire"
+      const hasAnyFilledMember = householdMembers.some(member =>
+        member.nom || member.prenom || member.sexe || member.dateNaissance
+      );
+
+      if (!hasAnyFilledMember && householdMembers.length > 0) {
+        setHouseholdMembers([]);
+      }
+    } else if (formData.situation && householdMembers.length === 0) {
+      // Pour les autres situations, s'il n'y a pas de membre, on en ajoute un par défaut
+      const newMember: HouseholdMember = {
+        id: `member-${Date.now()}`,
+        nom: '',
+        prenom: '',
+        sexe: '',
+        dateNaissance: ''
+      };
+      setHouseholdMembers([newMember]);
+    }
+  }, [formData.situation, householdMembers]);
 
   // Déterminer la section actuelle basée sur l'état du formulaire
   const getCurrentSection = () => {
@@ -188,12 +209,23 @@ export default function Demande() {
     setSubmitMessage('');
 
     try {
+      // Filtrer les membres du foyer valides
+      const validHouseholdMembers = householdMembers.filter(member =>
+        member.nom && member.prenom && member.sexe && member.dateNaissance
+      );
+
+      // Situations où le demandeur peut être seul dans le foyer
+      const singlePersonSituations = ['celibataire', 'concubinage', 'veuf'];
+      const canBeSinglePerson = singlePersonSituations.includes(formData.situation);
+
+      // Calculer le nombre total de personnes dans le foyer
+      const totalPersons = canBeSinglePerson && validHouseholdMembers.length === 0 ? 1 : validHouseholdMembers.length + 1;
+
       // Préparer les données pour l'API
       const demandeData = {
         ...formData,
-        membresfoyer: householdMembers.filter(member =>
-          member.nom && member.prenom && member.sexe && member.dateNaissance
-        ),
+        membresfoyer: validHouseholdMembers,
+        nombrePersonnesFoyer: totalPersons, // Nouveau champ pour le calcul correct
         fichiers: [
           ...identityFiles.map(file => ({ ...file, categorie: 'IDENTITE' as const })),
           ...resourceFiles.map(file => ({ ...file, categorie: 'RESSOURCES' as const })),
@@ -247,14 +279,29 @@ export default function Demande() {
 
   const isFormValid = () => {
     const requiredFields = ['prenom', 'nom', 'dateNaissance', 'sexe', 'situation', 'email', 'adresse', 'codePostal'];
-    return requiredFields.every(field => formData[field as keyof typeof formData]);
+    const basicFieldsValid = requiredFields.every(field => formData[field as keyof typeof formData]);
+
+    // Situations permettant un foyer d'une seule personne
+    const singlePersonSituations = ['celibataire', 'concubinage', 'veuf'];
+    const canBeSinglePerson = singlePersonSituations.includes(formData.situation);
+
+    if (canBeSinglePerson) {
+      return basicFieldsValid; // Pas besoin de membres du foyer
+    }
+
+    // Pour marie/pacse/divorce : au moins un membre requis
+    const hasValidHouseholdMember = householdMembers.some(member =>
+      member.nom && member.prenom && member.sexe && member.dateNaissance
+    );
+
+    return basicFieldsValid && hasValidHouseholdMember;
   };
 
   return (
-    <div className="min-h-screen py-12 bg-gradient-to-br from-slate-50 to-blue-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen py-8 sm:py-12 bg-gradient-to-br from-slate-50 to-blue-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 overflow-x-hidden">
         {/* Hero Section */}
-        <div className="bg-white rounded-xl shadow-xl overflow-hidden mb-12">
+        <div className="bg-white rounded-xl shadow-xl overflow-hidden mb-8 sm:mb-12">
           <div className="relative">
             {/* Background pattern */}
             <div className="absolute inset-0 bg-gradient-to-r from-[#752D8B]/10 to-blue-50/30 z-0 opacity-70"
@@ -271,26 +318,27 @@ export default function Demande() {
                   <span>Étape 1: Remplir le formulaire</span>
                 </div>
 
-                <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-4 leading-tight">
+                <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-gray-900 mb-4 leading-tight">
                   Faire votre demande <span className="text-[#752D8B]">d&apos;aide sociale</span>
                 </h1>
 
-                <p className="text-xl text-gray-600 mb-6 leading-relaxed">
+                <p className="text-base sm:text-lg md:text-xl text-gray-600 mb-6 leading-relaxed">
                   Remplissez ce formulaire avec attention. Tous les champs marqués
                   d&apos;un astérisque <span className="text-[#752D8B] font-semibold">(*)</span> sont obligatoires.
                 </p>
 
-                <div className="bg-gradient-to-r from-[#752D8B]/10 to-blue-100/30 rounded-lg p-5 border-l-4 border-[#752D8B] flex items-start space-x-4 mb-4 md:mb-0 text-left">
-                  <div className="bg-white rounded-full p-2 shadow-sm">
-                    <AlertCircle className="h-6 w-6 text-[#752D8B]" />
+                <div className="bg-gradient-to-r from-[#752D8B]/10 to-blue-100/30 rounded-lg p-4 sm:p-5 border-l-4 border-[#752D8B] flex items-start space-x-3 sm:space-x-4 mb-4 md:mb-0 text-left">
+                  <div className="bg-white rounded-full p-2 shadow-sm flex-shrink-0">
+                    <AlertCircle className="h-5 w-5 sm:h-6 sm:w-6 text-[#752D8B]" />
                   </div>
-                  <div>
-                    <p className="font-semibold text-gray-900 mb-1">Préparez vos documents</p>
-                    <p className="text-gray-700 text-sm">
+                  <div className="min-w-0">
+                    <p className="font-semibold text-gray-900 mb-1 text-sm sm:text-base">Préparez vos documents</p>
+                    <p className="text-gray-700 text-xs sm:text-sm">
                       Assurez-vous d&apos;avoir tous vos justificatifs sous format numérique.
-                      <br />Vous pouvez sauvegarder et reprendre votre demande à tout moment.
+                      <br className="hidden sm:block" />
+                      <span className="sm:hidden"> </span>Vous pouvez sauvegarder et reprendre votre demande à tout moment.
                     </p>
-                    <Link href="/informations" className="inline-flex items-center text-sm font-medium text-[#752D8B] hover:text-[#5a2269] mt-2">
+                    <Link href="/informations" className="inline-flex items-center text-xs sm:text-sm font-medium text-[#752D8B] hover:text-[#5a2269] mt-2">
                       Voir la liste des documents requis
                       <ArrowRight className="ml-1 h-3 w-3" />
                     </Link>
@@ -319,15 +367,15 @@ export default function Demande() {
           </div>
 
           {/* Helper bar */}
-          <div className="bg-gray-50 px-6 py-4 flex flex-wrap items-center justify-between border-t border-gray-100">
-            <div className="flex items-center space-x-2 text-sm text-gray-600">
-              <Clock className="h-4 w-4" />
+          <div className="bg-gray-50 px-4 sm:px-6 py-4 flex flex-col sm:flex-row flex-wrap items-center justify-between gap-3 sm:gap-2 border-t border-gray-100">
+            <div className="flex items-center space-x-2 text-xs sm:text-sm text-gray-600">
+              <Clock className="h-4 w-4 flex-shrink-0" />
               <span>Durée estimée: 10-15 minutes</span>
             </div>
             <Button
               variant="ghost"
               size="sm"
-              className="text-[#752D8B] hover:text-[#5a2269] hover:bg-[#752D8B]/10"
+              className="text-[#752D8B] hover:text-[#5a2269] hover:bg-[#752D8B]/10 text-xs sm:text-sm"
               onClick={() => setShowHelp(!showHelp)}
             >
               <Info className="h-4 w-4 mr-2" />
@@ -345,29 +393,29 @@ export default function Demande() {
         </div>
 
         {/* Progress Indicator simplifié pour mobile */}
-        <div className="mb-8 md:hidden">
-          <div className="flex items-center justify-center space-x-4 text-sm">
-            <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-[#752D8B] text-white rounded-full flex items-center justify-center font-bold">1</div>
-              <span className="text-gray-700">Informations</span>
+        <div className="mb-8 md:hidden px-2">
+          <div className="flex items-center justify-between text-xs sm:text-sm">
+            <div className="flex flex-col items-center space-y-1 flex-1">
+              <div className="w-7 h-7 sm:w-8 sm:h-8 bg-[#752D8B] text-white rounded-full flex items-center justify-center font-bold text-xs sm:text-sm">1</div>
+              <span className="text-gray-700 text-center">Info</span>
             </div>
-            <div className="w-8 h-0.5 bg-gray-300"></div>
-            <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center font-bold">2</div>
-              <span className="text-gray-500">Documents</span>
+            <div className="w-6 sm:w-8 h-0.5 bg-gray-300 -mt-4"></div>
+            <div className="flex flex-col items-center space-y-1 flex-1">
+              <div className="w-7 h-7 sm:w-8 sm:h-8 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center font-bold text-xs sm:text-sm">2</div>
+              <span className="text-gray-500 text-center">Docs</span>
             </div>
-            <div className="w-8 h-0.5 bg-gray-300"></div>
-            <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center font-bold">3</div>
-              <span className="text-gray-500">Envoi</span>
+            <div className="w-6 sm:w-8 h-0.5 bg-gray-300 -mt-4"></div>
+            <div className="flex flex-col items-center space-y-1 flex-1">
+              <div className="w-7 h-7 sm:w-8 sm:h-8 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center font-bold text-xs sm:text-sm">3</div>
+              <span className="text-gray-500 text-center">Envoi</span>
             </div>
           </div>
         </div>
 
         {/* Important Notice */}
         <Alert className="mb-8 border-orange-200 bg-orange-50">
-          <AlertCircle className="h-4 w-4 text-orange-600" />
-          <AlertDescription className="text-orange-800">
+          <AlertCircle className="h-4 w-4 sm:h-4 sm:w-4 text-orange-600 flex-shrink-0" />
+          <AlertDescription className="text-orange-800 text-xs sm:text-sm">
             <strong>Information importante :</strong> Avant de procéder à la demande, veuillez vous assurer que vous possédez toutes les pièces jointes requises.
             Si vous avez un doute, consultez la liste des pièces jointes nécessaires{' '}
             <Link href="/informations" className="underline font-medium hover:text-orange-900">
@@ -380,9 +428,9 @@ export default function Demande() {
           {/* Personal Information */}
           <Card className="border-0 shadow-lg">
             <CardHeader className="bg-gradient-to-r from-[#752D8B] to-[#5a2269] text-white rounded-t-lg">
-              <CardTitle className="text-xl flex items-center">
-                <User className="h-5 w-5 mr-2" />
-                Informations personnelles
+              <CardTitle className="text-lg sm:text-xl flex items-center">
+                <User className="h-4 w-4 sm:h-5 sm:w-5 mr-2 flex-shrink-0" />
+                <span className="truncate">Informations personnelles</span>
               </CardTitle>
             </CardHeader>
             <CardContent className="pt-6 space-y-6">
@@ -427,31 +475,25 @@ export default function Demande() {
                 </div>
               </div>
 
-              <div className="grid md:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
                 <div className="space-y-2">
-                  <Label htmlFor="dateNaissance" className="text-sm font-medium text-gray-700 flex items-center">
-                    <Calendar className="h-4 w-4 mr-1" />
-                    Date de naissance *
-                  </Label>
-                  <Input
+                  <DateInput
                     id="dateNaissance"
-                    type="date"
                     value={formData.dateNaissance}
-                    onChange={(e) => handleInputChange('dateNaissance', e.target.value)}
-                    className="transition-all duration-200 focus:ring-2 focus:ring-[#752D8B] focus:border-[#752D8B]"
-                    required
+                    onChange={(value) => handleInputChange('dateNaissance', value)}
+                    label="Date de naissance"
+                    placeholder="Votre date de naissance"
+                    required={true}
+                    helpText="Sélectionnez votre date de naissance complète"
                     aria-describedby="date-help"
                   />
-                  <p id="date-help" className="text-xs text-gray-500">
-                    Format: JJ/MM/AAAA
-                  </p>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="sexe" className="text-sm font-medium text-gray-700">
                     Sexe *
                   </Label>
                   <Select value={formData.sexe} onValueChange={(value) => handleInputChange('sexe', value)}>
-                    <SelectTrigger className="transition-all duration-200 focus:ring-2 focus:ring-[#752D8B] focus:border-[#752D8B]">
+                    <SelectTrigger className="transition-all duration-200 focus:ring-2 focus:ring-[#752D8B] focus:border-[#752D8B] w-full">
                       <SelectValue placeholder="Sélectionner votre sexe" />
                     </SelectTrigger>
                     <SelectContent>
@@ -465,7 +507,7 @@ export default function Demande() {
                     Situation *
                   </Label>
                   <Select value={formData.situation} onValueChange={(value) => handleInputChange('situation', value)}>
-                    <SelectTrigger className="transition-all duration-200 focus:ring-2 focus:ring-[#752D8B] focus:border-[#752D8B]">
+                    <SelectTrigger className="transition-all duration-200 focus:ring-2 focus:ring-[#752D8B] focus:border-[#752D8B] w-full">
                       <SelectValue placeholder="Sélectionner votre situation" />
                     </SelectTrigger>
                     <SelectContent>
@@ -549,9 +591,9 @@ export default function Demande() {
           {/* AAU - Aide Alimentaire d'Urgence */}
           <Card className="border-0 shadow-lg">
             <CardHeader className="bg-gradient-to-r from-[#752D8B] to-[#5a2269] text-white rounded-t-lg">
-              <CardTitle className="text-xl flex items-center">
-                <Heart className="h-5 w-5 mr-2" />
-                AAU - Aide Alimentaire d&apos;Urgence
+              <CardTitle className="text-lg sm:text-xl flex items-center">
+                <Heart className="h-4 w-4 sm:h-5 sm:w-5 mr-2 flex-shrink-0" />
+                <span className="truncate">AAU - Aide Alimentaire d&apos;Urgence</span>
               </CardTitle>
             </CardHeader>
             <CardContent className="pt-6">
@@ -580,9 +622,9 @@ export default function Demande() {
           {/* Address */}
           <Card className="border-0 shadow-lg">
             <CardHeader className="bg-gradient-to-r from-[#752D8B] to-[#5a2269] text-white rounded-t-lg">
-              <CardTitle className="text-xl flex items-center">
-                <MapPin className="h-5 w-5 mr-2" />
-                Adresse de résidence
+              <CardTitle className="text-lg sm:text-xl flex items-center">
+                <MapPin className="h-4 w-4 sm:h-5 sm:w-5 mr-2 flex-shrink-0" />
+                <span className="truncate">Adresse de résidence</span>
               </CardTitle>
             </CardHeader>
             <CardContent className="pt-6 space-y-6">
@@ -672,24 +714,82 @@ export default function Demande() {
           {/* Household Members */}
           <Card className="border-0 shadow-lg">
             <CardHeader className="bg-gradient-to-r from-[#752D8B] to-[#5a2269] text-white rounded-t-lg">
-              <CardTitle className="flex items-center justify-between">
-                <span className="text-xl flex items-center">
-                  <Users className="h-5 w-5 mr-2" />
-                  Membres du foyer
+              <CardTitle className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+                <span className="text-lg sm:text-xl flex items-center">
+                  <Users className="h-4 w-4 sm:h-5 sm:w-5 mr-2 flex-shrink-0" />
+                  <span className="truncate">Membres du foyer</span>
                 </span>
-                <Badge className="bg-white text-[#752D8B]">
-                  {householdMembers.length} {householdMembers.length > 1 ? 'membres' : 'membre'}
-                </Badge>
+                {formData.situation && (
+                  <Badge className="bg-white text-[#752D8B] text-xs sm:text-sm whitespace-nowrap">
+                    {(() => {
+                      const singlePersonSituations = ['celibataire', 'concubinage', 'veuf'];
+                      const canBeSinglePerson = singlePersonSituations.includes(formData.situation);
+                      const validMembers = householdMembers.filter(member =>
+                        member.nom && member.prenom && member.sexe && member.dateNaissance
+                      ).length;
+
+                      // Si c'est une situation de personne seule ET qu'il n'y a pas de membres ajoutés
+                      if (canBeSinglePerson && validMembers === 0) {
+                        return '1 personne';
+                      }
+
+                      // Sinon, on compte les membres valides + la personne qui remplit le formulaire
+                      const totalPersons = validMembers + 1;
+                      return `${totalPersons} ${totalPersons > 1 ? 'personnes' : 'personne'}`;
+                    })()}
+                  </Badge>
+                )}
               </CardTitle>
             </CardHeader>
             <CardContent className="pt-6">
+              {/* Message informatif basé sur la situation */}
+              {formData.situation && (
+                <div className="mb-6">
+                  {['celibataire', 'concubinage', 'veuf'].includes(formData.situation) ? (
+                    <div className="p-3 sm:p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                      <div className="flex items-start space-x-2 sm:space-x-3">
+                        <Info className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                        <div className="min-w-0">
+                          <p className="text-xs sm:text-sm font-medium text-blue-800">
+                            Foyer d&apos;une seule personne
+                          </p>
+                          <p className="text-xs text-blue-700 mt-1">
+                            Pour votre situation ({(() => {
+                              if (formData.situation === 'celibataire') return 'célibataire';
+                              if (formData.situation === 'concubinage') return 'en concubinage';
+                              return 'veuf/veuve';
+                            })()}),
+                            vous pouvez laisser cette section vide si vous vivez seul(e).
+                            Ajoutez uniquement les personnes qui vivent sous votre toit et à votre charge.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="p-3 sm:p-4 bg-orange-50 border border-orange-200 rounded-lg">
+                      <div className="flex items-start space-x-2 sm:space-x-3">
+                        <AlertCircle className="h-4 w-4 sm:h-5 sm:w-5 text-orange-600 mt-0.5 flex-shrink-0" />
+                        <div className="min-w-0">
+                          <p className="text-xs sm:text-sm font-medium text-orange-800">
+                            Membres du foyer requis
+                          </p>
+                          <p className="text-xs text-orange-700 mt-1">
+                            Pour votre situation, veuillez ajouter au moins un membre de votre foyer
+                            (conjoint(e), enfants, personnes à charge, etc.).
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
               <div>
                 <div className="hidden md:grid grid-cols-12 text-xs font-semibold text-gray-500 px-14 py-2 border-b border-gray-100 bg-gray-50 rounded-t-lg">
-                  <div className="col-span-1">Type</div>
                   <div className="col-span-3">Prénom</div>
                   <div className="col-span-3">Nom</div>
                   <div className="col-span-2">Sexe</div>
-                  <div className="col-span-3">Date de naissance</div>
+                  <div className="col-span-4">Date de naissance</div>
                 </div>
 
                 {/* Liste des membres */}
@@ -699,7 +799,7 @@ export default function Demande() {
                       key={member.id}
                       member={member}
                       onUpdate={updateHouseholdMember}
-                      onRemove={() => householdMembers.length > 1 ? removeHouseholdMember(member.id) : {}}
+                      onRemove={() => removeHouseholdMember(member.id)}
                       index={index}
                     />
                   ))}
@@ -716,7 +816,7 @@ export default function Demande() {
                   className="border-dashed border-gray-400 hover:border-[#752D8B] text-gray-600 hover:text-[#752D8B]"
                 >
                   <Plus className="h-4 w-4 mr-1" />
-                  Ajouter un autre membre
+                  Ajouter un membre du foyer
                 </Button>
               </div>
             </CardContent>
@@ -725,20 +825,20 @@ export default function Demande() {
           {/* File Uploads */}
           <Card className="border-0 shadow-lg">
             <CardHeader className="bg-gradient-to-r from-[#752D8B] to-[#5a2269] text-white rounded-t-lg">
-              <CardTitle className="text-xl flex items-center">
-                <FileText className="h-5 w-5 mr-2" />
-                Documents justificatifs
+              <CardTitle className="text-lg sm:text-xl flex items-center">
+                <FileText className="h-4 w-4 sm:h-5 sm:w-5 mr-2 flex-shrink-0" />
+                <span className="truncate">Documents justificatifs</span>
               </CardTitle>
             </CardHeader>
             <CardContent className="pt-6">
-              <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-lg">
-                <p className="text-amber-800 text-sm">
+              <div className="mb-6 p-3 sm:p-4 bg-amber-50 border border-amber-200 rounded-lg">
+                <p className="text-amber-800 text-xs sm:text-sm">
                   <strong>📄 Documents requis :</strong> Uploadez vos documents dans les catégories correspondantes.
                   Formats acceptés: PDF, JPG, PNG, Word. Taille max: 1MB par fichier.
                 </p>
               </div>
 
-              <div className="grid md:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
                 <FileUploadSection
                   title="IDENTITÉ"
                   icon={Users}
@@ -767,9 +867,9 @@ export default function Demande() {
           {/* Comments */}
           <Card className="border-0 shadow-lg">
             <CardHeader className="bg-gradient-to-r from-[#752D8B] to-[#5a2269] text-white rounded-t-lg">
-              <CardTitle className="text-xl flex items-center">
-                <MessageSquare className="h-5 w-5 mr-2" />
-                Informations complémentaires
+              <CardTitle className="text-lg sm:text-xl flex items-center">
+                <MessageSquare className="h-4 w-4 sm:h-5 sm:w-5 mr-2 flex-shrink-0" />
+                <span className="truncate">Informations complémentaires</span>
               </CardTitle>
             </CardHeader>
             <CardContent className="pt-6 space-y-4">
@@ -800,21 +900,21 @@ Exemples:
           </Card>
 
           {/* Submit */}
-          <div className="text-center bg-white rounded-lg shadow-lg p-8">
+          <div className="text-center bg-white rounded-lg shadow-lg p-4 sm:p-6 md:p-8">
             {submitMessage && (
               <Alert className={`mb-6 ${submitMessage.includes('succès') ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50'}`}>
-                <AlertCircle className={`h-4 w-4 ${submitMessage.includes('succès') ? 'text-green-600' : 'text-red-600'}`} />
-                <AlertDescription className={submitMessage.includes('succès') ? 'text-green-800' : 'text-red-800'}>
+                <AlertCircle className={`h-4 w-4 flex-shrink-0 ${submitMessage.includes('succès') ? 'text-green-600' : 'text-red-600'}`} />
+                <AlertDescription className={`text-xs sm:text-sm ${submitMessage.includes('succès') ? 'text-green-800' : 'text-red-800'}`}>
                   {submitMessage}
                 </AlertDescription>
               </Alert>
             )}
 
             <div className="mb-6">
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2">
                 Prêt à envoyer votre demande ?
               </h3>
-              <p className="text-gray-600">
+              <p className="text-sm sm:text-base text-gray-600">
                 Vérifiez que toutes les informations sont correctes avant l&apos;envoi.
               </p>
             </div>
@@ -823,33 +923,37 @@ Exemples:
               type="submit"
               size="lg"
               disabled={!isFormValid() || isSubmitting}
-              className="bg-[#752D8B] hover:bg-[#5a2269] disabled:opacity-50 text-white px-8 py-3 text-lg font-medium transition-all duration-200 transform hover:scale-105 disabled:hover:scale-100"
+              className="bg-[#752D8B] hover:bg-[#5a2269] disabled:opacity-50 text-white px-6 sm:px-8 py-2 sm:py-3 text-base sm:text-lg font-medium transition-all duration-200 transform hover:scale-105 disabled:hover:scale-100"
             >
               {isSubmitting ? (
                 <>
-                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                  Envoi en cours...
+                  <div className="animate-spin rounded-full h-4 w-4 sm:h-5 sm:w-5 border-b-2 border-white mr-2"></div>
+                  <span className="text-sm sm:text-base">Envoi en cours...</span>
                 </>
               ) : (
                 <>
-                  <Send className="h-5 w-5 mr-2" />
-                  Envoyer ma demande
+                  <Send className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
+                  <span className="text-sm sm:text-base">Envoyer ma demande</span>
                 </>
               )}
             </Button>
 
             {!isFormValid() && (
-              <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
-                <p className="text-sm text-red-700 font-medium mb-2">
-                  ⚠️ Champs obligatoires manquants
+              <div className="mt-4 p-3 sm:p-4 bg-red-50 border border-red-200 rounded-lg">
+                <p className="text-xs sm:text-sm text-red-700 font-medium mb-2">
+                  ⚠️ Informations manquantes
                 </p>
-                <p className="text-xs text-red-600">
-                  Veuillez remplir tous les champs marqués d&apos;un astérisque (*) pour pouvoir envoyer votre demande.
-                </p>
+                <div className="text-xs text-red-600 space-y-1">
+                  <p>Veuillez remplir tous les champs marqués d&apos;un astérisque (*).</p>
+                  {!['celibataire', 'concubinage', 'veuf'].includes(formData.situation) &&
+                    !householdMembers.some(member => member.nom && member.prenom && member.sexe && member.dateNaissance) && (
+                      <p>Pour votre situation, au moins un membre du foyer doit être ajouté.</p>
+                    )}
+                </div>
               </div>
             )}
 
-            <div className="mt-6 text-xs text-gray-500 space-y-1">
+            <div className="mt-6 text-xs sm:text-sm text-gray-500 space-y-1">
               <p>🔒 Vos données sont sécurisées et traitées en conformité avec le RGPD</p>
               <p>📞 Besoin d&apos;aide ? Contactez-nous au 05 94 XX XX XX</p>
             </div>
