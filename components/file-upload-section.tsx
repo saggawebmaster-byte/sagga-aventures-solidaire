@@ -134,7 +134,7 @@ export default function FileUploadSection({
               let userMessage = '❌ ';
 
               if (error.message.includes('TOO_LARGE') || error.message.includes('FileSizeMismatch') || error.message.includes('trop volumineux')) {
-                userMessage += 'Le fichier est trop volumineux. La taille maximale autorisée est de 1 MB. Veuillez compresser votre fichier ou en choisir un plus petit.';
+                userMessage += 'Le fichier est trop volumineux. La taille maximale autorisée est de 8 MB. Veuillez compresser votre fichier ou en choisir un plus petit.';
               } else if (error.message.includes('TOO_MANY_FILES')) {
                 userMessage += 'Trop de fichiers sélectionnés. Vous pouvez uploader maximum 10 fichiers à la fois.';
               } else if (error.message.includes('INVALID_FILE_TYPE')) {
@@ -156,12 +156,12 @@ export default function FileUploadSection({
             }}
             onBeforeUploadBegin={(uploadedFiles: File[]) => {
               // Validation côté client avant l'upload
-              const maxSize = 1 * 1024 * 1024; // 1MB
+              const maxSize = 8 * 1024 * 1024; // 8MB
               const invalidFiles = uploadedFiles.filter((file: File) => file.size > maxSize);
 
               if (invalidFiles.length > 0) {
                 const fileNames = invalidFiles.map((f: File) => `${f.name} (${(f.size / 1024 / 1024).toFixed(2)} MB)`).join(', ');
-                setError(`❌ Fichier(s) trop volumineux : ${fileNames}. Taille maximale : 1 MB. Veuillez compresser ou choisir des fichiers plus petits.`);
+                setError(`❌ Fichier(s) trop volumineux : ${fileNames}. Taille maximale : 8 MB. Veuillez compresser ou choisir des fichiers plus petits.`);
                 setIsUploading(false);
                 return [];
               }
@@ -177,7 +177,7 @@ export default function FileUploadSection({
             }}
             content={{
               label: "Glissez-déposez vos fichiers ici",
-              allowedContent: "PDF, JPEG, PNG, Word (max 1 MB)",
+              allowedContent: "PDF, JPEG, PNG, Word (max 8 MB)",
               button: "Choisir des fichiers",
             }}
             config={{
@@ -245,7 +245,7 @@ export default function FileUploadSection({
         {/* File format info */}
         <div className="text-xs text-gray-500 bg-gray-50 p-3 rounded border">
           <p className="font-medium mb-1">ℹ️ Formats acceptés :</p>
-          <p>PDF, JPG, PNG, Word • Taille max : 1 MB par fichier</p>
+          <p>PDF, JPG, PNG, Word • Taille max : 8 MB par fichier</p>
         </div>
       </CardContent>
     </Card>

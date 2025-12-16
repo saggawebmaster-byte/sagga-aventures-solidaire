@@ -13,20 +13,20 @@ const f = createUploadthing({
 
 export const ourFileRouter = {
   documentUploader: f({
-    "application/pdf": { maxFileSize: "1MB", maxFileCount: 10 },
-    "image/jpeg": { maxFileSize: "1MB", maxFileCount: 10 },
-    "image/png": { maxFileSize: "1MB", maxFileCount: 10 },
-    "application/msword": { maxFileSize: "1MB", maxFileCount: 10 },
-    "application/vnd.openxmlformats-officedocument.wordprocessingml.document": { maxFileSize: "1MB", maxFileCount: 10 },
+    "application/pdf": { maxFileSize: "8MB", maxFileCount: 10 },
+    "image/jpeg": { maxFileSize: "8MB", maxFileCount: 10 },
+    "image/png": { maxFileSize: "8MB", maxFileCount: 10 },
+    "application/msword": { maxFileSize: "8MB", maxFileCount: 10 },
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document": { maxFileSize: "8MB", maxFileCount: 10 },
   })
     .middleware(async ({ req, files }) => {
       // Validation de la taille des fichiers
       for (const file of files) {
-        const maxSize = 1 * 1024 * 1024; // 1MB en bytes
+        const maxSize = 8 * 1024 * 1024; // 8MB en bytes
         if (file.size > maxSize) {
           throw new UploadThingError({
             code: "TOO_LARGE",
-            message: `Le fichier "${file.name}" est trop volumineux. Taille maximale autorisée : 1 MB. Taille du fichier : ${(file.size / 1024 / 1024).toFixed(2)} MB.`,
+            message: `Le fichier "${file.name}" est trop volumineux. Taille maximale autorisée : 8 MB. Taille du fichier : ${(file.size / 1024 / 1024).toFixed(2)} MB.`,
           });
         }
       }

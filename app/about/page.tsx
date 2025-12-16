@@ -45,11 +45,10 @@ export default function About() {
               Qui sommes-nous ?
             </h2>
             <p className="text-lg text-gray-600 max-w-4xl mx-auto leading-relaxed">
-              SAGGA (Solidarité Alimentaire Groupe Guyane Antilles) est une association créée en 2021
-              qui fédère les épiceries sociales et solidaires pour lutter contre la précarité alimentaire
-              en Guyane et aux Antilles. Partenaire officiel du réseau ANDES (Association Nationale
-              de Développement des Épiceries Solidaires), nous œuvrons pour garantir l&apos;accès à une
-              alimentation de qualité pour tous.
+              SAGGA (Solidarité Alimentaire Groupe Guyane Antilles) est une association loi 1901, créée en 2021
+              qui fédère des épiceries sociales et/ou solidaires. Mais aussi les structures habilitées par les
+              services de l&apos;État à distribuer de l&apos;aide alimentaire. L&apos;objectif est de participer à la lutte
+              contre la précarité alimentaire en Guyane et aux Antilles.
             </p>
           </div>
 
@@ -162,24 +161,23 @@ export default function About() {
             </div>
           </div>
 
-          {/* Partnership with ANDES */}
+          {/* Partnership with ANDES and REVIVRE */}
           <Card className="border-0 shadow-lg mb-16 bg-gradient-to-r from-purple-50 to-blue-50">
             <CardHeader className="text-center">
               <div className="flex items-center justify-center mb-4">
                 <Handshake className="h-8 w-8 text-[#752D8B] mr-3" />
-                <CardTitle className="text-2xl text-gray-900">Partenariat ANDES</CardTitle>
+                <CardTitle className="text-2xl text-gray-900">Partenariat</CardTitle>
               </div>
               <CardDescription className="text-lg">
-                Association Nationale de Développement des Épiceries Solidaires
+                Réseau ANDES et Réseau humanitaire REVIVRE
               </CardDescription>
             </CardHeader>
             <CardContent className="text-center">
               <p className="text-gray-700 leading-relaxed max-w-3xl mx-auto">
-                SAGGA est fière d'être partenaire du réseau ANDES, qui regroupe plus de 630 épiceries
-                solidaires à travers la France. Cette collaboration nous permet de bénéficier d'une
-                expertise nationale tout en adaptant nos actions aux spécificités de nos territoires
-                ultramarins. Ensemble, nous servons plus de 260 000 bénéficiaires et distribuons
-                44 millions de repas par an.
+                SAGGA est fière d&apos;être partenaire du réseau ANDES, qui regroupe plus de 630 épiceries
+                solidaires à travers la France et du réseau humanitaire REVIVRE. Cette collaboration nous permet
+                de bénéficier d&apos;une expertise de deux têtes de réseaux nationales tout en adaptant nos actions
+                aux spécificités de nos territoires ultramarins.
               </p>
             </CardContent>
           </Card>
@@ -213,7 +211,7 @@ export default function About() {
                     <div className="w-2 h-2 bg-[#752D8B] rounded-full mt-2 mr-3 flex-shrink-0"></div>
                     <div>
                       <p className="font-semibold text-gray-900">Réseau</p>
-                      <p className="text-gray-600">Partenaire ANDES</p>
+                      <p className="text-gray-600">ANDES, REVIVRE</p>
                     </div>
                   </div>
                 </div>

@@ -834,7 +834,7 @@ export default function Demande() {
               <div className="mb-6 p-3 sm:p-4 bg-amber-50 border border-amber-200 rounded-lg">
                 <p className="text-amber-800 text-xs sm:text-sm">
                   <strong>📄 Documents requis :</strong> Uploadez vos documents dans les catégories correspondantes.
-                  Formats acceptés: PDF, JPG, PNG, Word. Taille max: 1MB par fichier.
+                  Formats acceptés: PDF, JPG, PNG, Word. Taille max: 8 MB par fichier.
                 </p>
               </div>
 
