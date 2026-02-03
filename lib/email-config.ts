@@ -16,53 +16,54 @@ export const EPICERIE_EMAIL_MAP: Record<string, { email: string; name: string }>
 
 export const CCAS_EMAIL_MAP: Record<string, { email: string; name: string; code: string }> = {
   "CAYENNE": {
-    email: "ccas.cayenne@sagga.fr",
+    // email: "ccas.cayenne@sagga.fr",
+    email: "ccas.cayenne@sagga.org",
     name: "CCAS CAYENNE",
     code: "688192"
   },
   "MACOURIA": {
-    email: "ccas.macouria@sagga.fr", 
+    email: "ccas.macouria@sagga.org",   
     name: "CCAS MACOURIA",
     code: "688547"
   },
   "REMIRE-MONTJOLY": {
-    email: "ccas.rm@sagga.fr",
+    email: "ccas.rm@sagga.org",
     name: "CCAS REMIRE-MONTJOLY", 
     code: "688201"
   },
   "MATOURY": {
-    email: "ccas.matoury@sagga.fr",
+    email: "ccas.matoury@sagga.org",
     name: "CCAS MATOURY",
     code: "688204"
   },
   "ROURA": {
-    email: "ccas.roura@sagga.fr",
+    email: "ccas.roura@sagga.org",
     name: "CCAS ROURA",
     code: "688206"
   },
   "KOUROU": {
-    email: "ccas.kouru@sagga.fr",
+    email: "ccas.kourou@sagga.org",
     name: "CCAS KOUROU", 
     code: "688612"
   },
   "MONTSINÉRY-TONNEGRANDE": {
-    email: "ccas.montsinery@sagga.fr",
+    email: "ccas.montsinery@sagga.org",
     name: "CCAS MONTSINERY",
     code: "688212"
   },
   "SAINT-LAURENT DU MARONI": {
-    email: "ccas.sl@sagga.fr",
+    email: "ccas.sl@sagga.org",
     name: "CCAS SAINT LAURENT",
     code: "762402"
   },
   "MANA": {
-    email: "ccas.mana@sagga.fr",
+    email: "ccas.mana@sagga.org",
     name: "CCAS MANA",
     code: "762316"
   },
   "IRACOUBO": {
-    email: "ccas.iracoubou@sagga.fr",
-    name: "CCAS IRACOUBO", 
+    email: "ccas.iracoubou@sagga.org",
+    name: "CCAS IRACOUBO",
     code: "688197"
   }
 };
@@ -90,8 +91,8 @@ Merci de la traiter dans les plus brefs délais.`,
   CCAS: `Bonjour,
 Une requête pour une aide alimentaire d'urgence a été déposée. 
 Nous vous remercions de procéder à son instruction et de nous faire part de votre décision aux adresses mails suivantes : 
-• contact@sagga.fr 
-• administratif@sagga.fr`
+• contact@sagga.org 
+• administratif@sagga.org`
 };
 
 // Fonction pour normaliser les noms de villes
