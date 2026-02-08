@@ -102,6 +102,7 @@ export async function POST(request: NextRequest) {
           dateNaissance: membre.dateNaissance,
           lienParente: 'Membre du foyer'
         })),
+        fichiers: validatedData.fichiers || [], // Envoyer les fichiers complets avec URLs
         fichierJustificatifs: validatedData.fichiers?.length ? 
           `${validatedData.fichiers.length} fichier(s) joint(s)` : undefined,
         createdAt: demande.createdAt

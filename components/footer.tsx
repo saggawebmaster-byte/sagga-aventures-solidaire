@@ -8,7 +8,7 @@ const Footer = () => {
     <footer className="bg-gray-900 text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          
+
           {/* Logo et Description */}
           <div className="space-y-4">
             <Link href="/" className="flex items-center space-x-3 text-white hover:text-purple-300 transition-colors">
@@ -19,7 +19,7 @@ const Footer = () => {
               </div>
             </Link>
             <p className="text-gray-300 text-sm leading-relaxed">
-              Association d'aide alimentaire en Guyane française, dédiée à soutenir les familles dans le besoin 
+              Association d'aide alimentaire en Guyane française, dédiée à soutenir les familles dans le besoin
               à travers nos épiceries solidaires et notre programme d'Aide Alimentaire d'Urgence (AAU).
             </p>
           </div>
@@ -82,18 +82,18 @@ const Footer = () => {
                 <Mail className="h-5 w-5 text-purple-300 mt-0.5 flex-shrink-0" />
                 <div>
                   <p className="text-gray-300 text-sm">
-                    <a href="mailto:contact@sagga.fr" className="hover:text-white transition-colors">
-                      contact@sagga.fr
+                    <a href="mailto:contact@sagga.org" className="hover:text-white transition-colors">
+                      contact@sagga.org
                     </a>
                   </p>
                   <p className="text-gray-300 text-sm">
-                    <a href="mailto:administratif@sagga.fr" className="hover:text-white transition-colors">
-                      administratif@sagga.fr
+                    <a href="mailto:administratif@sagga.org" className="hover:text-white transition-colors">
+                      administratif@sagga.org
                     </a>
                   </p>
                 </div>
               </div>
-              
+
               <div className="flex items-start space-x-3">
                 <Phone className="h-5 w-5 text-purple-300 mt-0.5 flex-shrink-0" />
                 <div>
@@ -101,7 +101,7 @@ const Footer = () => {
                   <p className="text-gray-400 text-xs">Du lundi au vendredi</p>
                 </div>
               </div>
-              
+
               <div className="flex items-start space-x-3">
                 <MapPin className="h-5 w-5 text-purple-300 mt-0.5 flex-shrink-0" />
                 <div>
@@ -120,7 +120,7 @@ const Footer = () => {
               <p>&copy; 2024 Sagga - L'aventure Solidaire. Tous droits réservés.</p>
               <p className="mt-1">Association d'aide alimentaire en Guyane française</p>
             </div>
-            
+
             <div className="flex items-center space-x-6 text-sm text-gray-400">
               <Link href="/mentions-legales" className="hover:text-white transition-colors">
                 Mentions légales

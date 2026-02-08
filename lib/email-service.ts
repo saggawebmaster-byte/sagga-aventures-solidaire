@@ -133,6 +133,13 @@ interface FormDemandeData {
     dateNaissance: string;
     sexe?: string;
   }>;
+  fichiers?: Array<{
+    nom: string;
+    url: string;
+    taille: number;
+    type: string;
+    categorie: string;
+  }>;
   fichierJustificatifs?: string;
   createdAt?: Date;
 }
@@ -303,7 +310,57 @@ function generateEmailTemplate(demande: FormDemandeData, destination: any): stri
             </div>
             ` : ''}
 
-            ${demande.fichierJustificatifs ? `
+            <!-- Documents justificatifs -->
+            ${demande.fichiers && demande.fichiers.length > 0 ? `
+            <div class="section">
+                <h3>📎 Documents justificatifs</h3>
+                <p style="margin-bottom: 12px; color: #374151;">
+                    <strong>${demande.fichiers.length}</strong> document(s) joint(s). Cliquez sur les liens ci-dessous pour télécharger :
+                </p>
+                
+                <!-- Grouper par catégorie -->
+                ${['IDENTITE', 'RESSOURCES', 'CHARGES'].map(categorie => {
+                  const fichiers = demande.fichiers!.filter(f => f.categorie === categorie);
+                  if (fichiers.length === 0) return '';
+                  
+                  const categorieLabel = {
+                    'IDENTITE': '👤 Pièces d\'identité',
+                    'RESSOURCES': '💰 Justificatifs de ressources',
+                    'CHARGES': '🧾 Justificatifs de charges'
+                  }[categorie];
+                  
+                  return `
+                  <div class="field" style="margin-bottom: 16px;">
+                    <label style="font-weight: 600; color: #111827; display: block; margin-bottom: 8px;">
+                      ${categorieLabel}
+                    </label>
+                    <div style="background: #f9fafb; padding: 12px; border-radius: 6px; border: 1px solid #e5e7eb;">
+                      ${fichiers.map((fichier, index) => `
+                        <div style="margin-bottom: ${index < fichiers.length - 1 ? '8px' : '0'};">
+                          <a href="${fichier.url}" 
+                             target="_blank"
+                             rel="noopener noreferrer"
+                             style="color: #752D8B; text-decoration: none; font-weight: 500; display: inline-flex; align-items: center;">
+                            📄 ${fichier.nom}
+                          </a>
+                          <span style="color: #6b7280; font-size: 12px; margin-left: 8px;">
+                            (${(fichier.taille / 1024).toFixed(1)} KB)
+                          </span>
+                        </div>
+                      `).join('')}
+                    </div>
+                  </div>
+                  `;
+                }).join('')}
+                
+                <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 6px; padding: 12px; margin-top: 12px;">
+                  <p style="margin: 0; font-size: 13px; color: #1e40af;">
+                    💡 <strong>Astuce :</strong> Cliquez sur les liens pour ouvrir les documents dans votre navigateur. 
+                    Vous pouvez également faire un clic droit → "Enregistrer sous" pour les télécharger.
+                  </p>
+                </div>
+            </div>
+            ` : demande.fichierJustificatifs ? `
             <div class="section">
                 <h3>📎 Documents justificatifs</h3>
                 <div class="field">
@@ -319,7 +376,7 @@ function generateEmailTemplate(demande: FormDemandeData, destination: any): stri
             <p>Cette demande ${isAAU ? 'urgente ' : ''}doit être traitée dans les plus brefs délais.</p>
             ${isAAU ? '<p><strong>⚠️ Cette demande nécessite une attention particulière en raison de son caractère urgent.</strong></p>' : ''}
             <p style="margin-top: 16px; font-size: 12px;">
-                <strong>Contact SAGGA :</strong> contact@sagga.fr | administratif@sagga.fr
+                <strong>Contact SAGGA :</strong> contact@sagga.org | administratif@sagga.org
             </p>
         </div>
     </div>
@@ -449,11 +506,11 @@ function generateConfirmationEmailTemplate(demande: FormDemandeData, destination
                 <div class="grid">
                     <div class="field">
                         <label>Email principal</label>
-                        <value>contact@sagga.fr</value>
+                        <value>contact@sagga.org</value>
                     </div>
                     <div class="field">
                         <label>Email administratif</label>
-                        <value>administratif@sagga.fr</value>
+                        <value>administratif@sagga.org</value>
                     </div>
                 </div>
             </div>

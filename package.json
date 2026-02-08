@@ -16,9 +16,15 @@
     "setup:prod": "./setup-db.sh prod",
     "db:test": "node scripts/test-db.js",
     "email:test": "node scripts/test-email-config.js",
-    "email:test-send": "node scripts/test-email-system.js"
+    "email:test-send": "node scripts/test-email-system.js",
+    "seed": "tsx prisma/seed.ts"
+  },
+  "prisma": {
+    "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.985.0",
+    "@aws-sdk/s3-request-presigner": "^3.985.0",
     "@hookform/resolvers": "^3.9.0",
     "@next/swc-wasm-nodejs": "13.5.1",
     "@prisma/client": "^5.7.1",
@@ -55,7 +61,6 @@
     "@types/node": "20.6.2",
     "@types/react": "18.2.22",
     "@types/react-dom": "18.2.7",
-    "@uploadthing/react": "^6.2.2",
     "@vercel/postgres": "^0.10.0",
     "autoprefixer": "10.4.15",
     "bcryptjs": "^3.0.2",
@@ -70,6 +75,7 @@
     "eslint-config-next": "13.5.1",
     "input-otp": "^1.2.4",
     "lucide-react": "^0.446.0",
+    "nanoid": "^5.1.6",
     "next": "13.5.1",
     "next-themes": "^0.3.0",
     "postcss": "8.4.30",
@@ -86,8 +92,12 @@
     "tailwindcss": "3.3.3",
     "tailwindcss-animate": "^1.0.7",
     "typescript": "5.2.2",
-    "uploadthing": "^6.3.3",
     "vaul": "^0.9.9",
     "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.21.0"
   }
 }
