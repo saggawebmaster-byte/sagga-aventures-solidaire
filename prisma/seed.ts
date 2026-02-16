@@ -17,7 +17,7 @@ async function main() {
   }
 
   // Créer un utilisateur administrateur
-  const adminEmail = 'admin@sagga.org'
+  const adminEmail = 'admin@sagga.fr'
   const adminPassword = 'Admin@SAGGA2024!' // Changez ce mot de passe !
   
   // Hacher le mot de passe au format Better Auth

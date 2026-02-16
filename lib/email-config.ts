@@ -1,8 +1,8 @@
 // Configuration des correspondances d'emails pour les demandes
 export const EPICERIE_EMAIL_MAP: Record<string, { email: string; name: string }> = {
   "CAYENNE": {
-    // email: "epicerie.cayenne@sagga.org",
-    email: "contact@digitalperformers.org",
+    email: "epicerie.cayenne@sagga.org",
+    // email: "contact@digitalperformers.org",
     name: "Epicerie TI DEGRA"
   },
   "SAINT-LAURENT DU MARONI": {
@@ -10,17 +10,17 @@ export const EPICERIE_EMAIL_MAP: Record<string, { email: string; name: string }>
     name: "Epicerie TI BAKISCI"
   },
   "MACOURIA": {
-    // email: "epicerie.macouria@sagga.org",
-    email: "contact@bumuntuproductions.com",
+    email: "epicerie.macouria@sagga.org",
+    // email: "contact@bumuntuproductions.com",
     name: "Epicerie TI KEKE"
   }
 };
 
 export const CCAS_EMAIL_MAP: Record<string, { email: string; name: string; code: string }> = {
   "CAYENNE": {
-    // email: "ccas.cayenne@sagga.org",
+    email: "ccas.cayenne@sagga.org",
     // email: "thomas.awounfouet@gmail.com",
-    email: "pathy.lutiku@gmail.com",
+    // email: "pathy.lutiku@gmail.com",
     name: "CCAS CAYENNE",
     code: "688192"
   },
