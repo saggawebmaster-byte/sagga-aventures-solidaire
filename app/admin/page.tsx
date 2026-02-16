@@ -141,7 +141,7 @@ export default function AdminDashboard() {
         setError(result.error || 'Erreur lors du chargement des demandes');
       }
     } catch (err) {
-      console.error('Erreur de connexion:', err);
+      // console.error('Erreur de connexion:', err);
       setError('Erreur de connexion au serveur');
     } finally {
       setLoading(false);
@@ -238,10 +238,11 @@ export default function AdminDashboard() {
           setSelectedDemande({ ...selectedDemande, status: newStatus });
         }
 
-        console.warn('API status update failed, updated locally:', result.error);
+        // console.warn('API status update failed, updated locally:', result.error);
+
       }
     } catch (err) {
-      console.error('Erreur lors de la mise à jour du statut:', err);
+        // console.error('Erreur lors de la mise à jour du statut:', err);
 
       // En cas d'erreur réseau, on met à jour quand même localement
       const updatedDemandes = demandes.map(demande =>

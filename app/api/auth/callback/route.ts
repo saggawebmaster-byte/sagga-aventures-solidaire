@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.redirect(new URL('/auth/login', request.url))
     }
 
-    console.log("✅ [/api/auth/callback] Session valide - redirection vers:", callbackUrl)
+    // console.log("✅ [/api/auth/callback] Session valide - redirection vers:", callbackUrl)
     
     // Rediriger vers l'URL de callback ou la page d'accueil
     return NextResponse.redirect(new URL(callbackUrl, request.url))
