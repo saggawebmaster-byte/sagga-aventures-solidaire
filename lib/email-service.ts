@@ -88,7 +88,7 @@ export async function sendConfirmationEmail(demandeData: FormDemandeData, destin
       : `✅ Confirmation - Votre demande d'aide sociale a été transmise`;
 
     const { data, error } = await resend.emails.send({
-      from: 'SAGGA <noreply@sagga.org>',
+      from: 'SAGGA <noreply@sagga.fr>',
       to: [demandeData.email],
       subject,
       html: htmlContent,
