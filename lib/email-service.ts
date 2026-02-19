@@ -31,14 +31,19 @@ export async function sendDemandeNotification(demandeData: FormDemandeData): Pro
       : `Nouvelle demande d'aide sociale - ${demandeData.prenom} ${demandeData.nom}`;
 
     // Envoyer l'email à l'organisme
+    // Gérer le cas où destination.email peut être un string ou un array de strings
+    const recipientEmails = Array.isArray(destination.email) 
+      ? destination.email 
+      : [destination.email];
+
     const { data, error } = await resend.emails.send({
-      from: 'SAGGA <noreply@sagga.fr>',
-      to: [destination.email],
+      from: 'SAGGA <noreply@sagga.org>',
+      to: recipientEmails,
       subject,
       html: htmlContent,
       // Copie pour l'administration si c'est une demande AAU
       ...(demandeData.aau && {
-        cc: ['contact@sagga.fr', 'administratif@sagga.fr']
+        cc: ['contact@sagga.org', 'administratif@sagga.org']
       })
     });
 
@@ -83,12 +88,12 @@ export async function sendConfirmationEmail(demandeData: FormDemandeData, destin
       : `✅ Confirmation - Votre demande d'aide sociale a été transmise`;
 
     const { data, error } = await resend.emails.send({
-      from: 'SAGGA <noreply@sagga.fr>',
+      from: 'SAGGA <noreply@sagga.org>',
       to: [demandeData.email],
       subject,
       html: htmlContent,
       // Copie pour SAGGA pour traçabilité
-      bcc: ['contact@sagga.fr']
+      bcc: ['contact@sagga.org']
     });
 
     if (error) {

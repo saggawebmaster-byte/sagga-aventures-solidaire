@@ -1,71 +1,96 @@
 // Configuration des correspondances d'emails pour les demandes
 export const EPICERIE_EMAIL_MAP: Record<string, { email: string; name: string }> = {
   "CAYENNE": {
-    email: "epicerie.cayenne@sagga.org",
-    // email: "contact@digitalperformers.org",
+    email: "tidegra@sagga.org",
     name: "Epicerie TI DEGRA"
   },
   "SAINT-LAURENT DU MARONI": {
-    email: "epicerie.sl@sagga.org", 
+    email: "tibakisci@sagga.org", 
     name: "Epicerie TI BAKISCI"
   },
   "MACOURIA": {
-    email: "epicerie.macouria@sagga.org",
-    // email: "contact@bumuntuproductions.com",
+    email: "tikeke@sagga.org",
     name: "Epicerie TI KEKE"
   }
 };
 
-export const CCAS_EMAIL_MAP: Record<string, { email: string; name: string; code: string }> = {
+export const CCAS_EMAIL_MAP: Record<string, { email: string | string[]; name: string; code: string }> = {
   "CAYENNE": {
-    email: "ccas.cayenne@sagga.org",
-    // email: "thomas.awounfouet@gmail.com",
-    // email: "pathy.lutiku@gmail.com",
+    email: ["direction@ccas-cayenne.org", "coordinatriceaau@ccascayenne.org"],
     name: "CCAS CAYENNE",
     code: "688192"
   },
   "MACOURIA": {
-    email: "ccas.macouria@sagga.org",   
+    email: "alsainteluce@ccasmacouria.fr",   
     name: "CCAS MACOURIA",
     code: "688547"
   },
   "REMIRE-MONTJOLY": {
-    email: "ccas.rm@sagga.org",
+    email: [
+      "ccas.rm.lpulcherie@orange.fr",
+      "ccas.rm.simonnet@orange.fr",
+      "ccas.rm.stanislas@orange.fr"
+    ],
     name: "CCAS REMIRE-MONTJOLY", 
     code: "688201"
   },
   "MATOURY": {
-    email: "ccas.matoury@sagga.org",
+    email: [
+      "ccas@mairie-matoury.fr",
+      "ccasmt@orange.fr",
+      "line.atticot@mairie-matoury.fr"
+    ],
     name: "CCAS MATOURY",
     code: "688204"
   },
   "ROURA": {
-    email: "ccas.roura@sagga.org",
+    email: [
+      "nicole.gomes-caldas@roura.gf",
+      "centresocio.roura@orange.fr",
+      "mariechantal.dominique@roura.gf"
+    ],
     name: "CCAS ROURA",
     code: "688206"
   },
   "KOUROU": {
-    email: "ccas.kourou@sagga.org",
+    email: [
+      "henriol.murielle@ctguyane.fr",
+      "jeanne.varlin@ciass-guyane.fr",
+      "virginie.dias@ciass-guyane.fr"
+    ],
     name: "CCAS KOUROU", 
     code: "688612"
   },
   "MONTSINÉRY-TONNEGRANDE": {
-    email: "ccas.montsinery@sagga.org",
+    email: [
+      "line.bourdon@montsinery-tonnegrande.fr",
+      "celly.popo@montsinery-tonnegrande.fr",
+      "yannis.manguer@montsinery-tonnegrande.fr"
+    ],
     name: "CCAS MONTSINERY",
     code: "688212"
   },
   "SAINT-LAURENT DU MARONI": {
-    email: "ccas.sl@sagga.org",
+    email: [
+      "ccas97320c.nanhou@orange.fr",
+      "ccas97320educateur1@orange.fr"
+    ],
     name: "CCAS SAINT LAURENT",
     code: "762402"
   },
   "MANA": {
-    email: "ccas.mana@sagga.org",
+    email: [
+      "ccas.mana@orange.fr",
+      "bazilie@mairie-mana.fr"
+    ],
     name: "CCAS MANA",
     code: "762316"
   },
   "IRACOUBO": {
-    email: "ccas.iracoubou@sagga.org",
+    email: [
+      "louise.alexis@ctguyane.fr",
+      "accueil.iracoubo@gmail.fr"
+    ],
     name: "CCAS IRACOUBO",
     code: "688197"
   }
