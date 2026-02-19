@@ -37,7 +37,7 @@ export async function sendDemandeNotification(demandeData: FormDemandeData): Pro
       : [destination.email];
 
     const { data, error } = await resend.emails.send({
-      from: 'SAGGA <noreply@sagga.org>',
+      from: 'SAGGA <noreply@sagga.fr>',
       to: recipientEmails,
       subject,
       html: htmlContent,
