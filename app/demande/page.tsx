@@ -244,8 +244,9 @@ export default function Demande() {
       const result = await response.json();
 
       if (result.success) {
-        setSubmitMessage('Votre demande a été envoyée avec succès. Nous vous contacterons dans les plus brefs délais.');
-        // Réinitialiser le formulaire
+        setSubmitMessage('✅ Votre demande a été envoyée avec succès ! Redirection en cours...');
+
+        // Réinitialiser complètement le formulaire
         setFormData({
           prenom: '',
           nom: '',
@@ -266,13 +267,20 @@ export default function Demande() {
         setIdentityFiles([]);
         setResourceFiles([]);
         setChargeFiles([]);
+
+        // Rediriger vers la page d'accueil après 2 secondes
+        setTimeout(() => {
+          globalThis.location.href = '/';
+        }, 5000);
       } else {
-        setSubmitMessage(`Erreur lors de l'envoi de votre demande: ${result.error}`);
+        setSubmitMessage(`❌ Erreur : ${result.error || 'Une erreur est survenue'}`);
+        // Réactiver le bouton en cas d'erreur
+        setIsSubmitting(false);
       }
     } catch (error) {
       console.error('Erreur:', error);
-      setSubmitMessage('Une erreur est survenue lors de l\'envoi de votre demande. Veuillez réessayer.');
-    } finally {
+      setSubmitMessage('❌ Une erreur est survenue lors de l\'envoi. Veuillez réessayer.');
+      // Réactiver le bouton en cas d'erreur
       setIsSubmitting(false);
     }
   };
@@ -902,43 +910,47 @@ Exemples:
           {/* Submit */}
           <div className="text-center bg-white rounded-lg shadow-lg p-4 sm:p-6 md:p-8">
             {submitMessage && (
-              <Alert className={`mb-6 ${submitMessage.includes('succès') ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50'}`}>
-                <AlertCircle className={`h-4 w-4 flex-shrink-0 ${submitMessage.includes('succès') ? 'text-green-600' : 'text-red-600'}`} />
-                <AlertDescription className={`text-xs sm:text-sm ${submitMessage.includes('succès') ? 'text-green-800' : 'text-red-800'}`}>
+              <Alert className={`mb-6 ${submitMessage.includes('✅') ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50'}`}>
+                <AlertCircle className={`h-5 w-5 flex-shrink-0 ${submitMessage.includes('✅') ? 'text-green-600' : 'text-red-600'}`} />
+                <AlertDescription className={`text-sm sm:text-base font-medium ${submitMessage.includes('✅') ? 'text-green-800' : 'text-red-800'}`}>
                   {submitMessage}
                 </AlertDescription>
               </Alert>
             )}
 
-            <div className="mb-6">
-              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2">
-                Prêt à envoyer votre demande ?
-              </h3>
-              <p className="text-sm sm:text-base text-gray-600">
-                Vérifiez que toutes les informations sont correctes avant l&apos;envoi.
-              </p>
-            </div>
+            {!submitMessage && (
+              <>
+                <div className="mb-6">
+                  <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2">
+                    Prêt à envoyer votre demande ?
+                  </h3>
+                  <p className="text-sm sm:text-base text-gray-600">
+                    Vérifiez que toutes les informations sont correctes avant l&apos;envoi.
+                  </p>
+                </div>
 
-            <Button
-              type="submit"
-              size="lg"
-              disabled={!isFormValid() || isSubmitting}
-              className="bg-[#752D8B] hover:bg-[#5a2269] disabled:opacity-50 text-white px-6 sm:px-8 py-2 sm:py-3 text-base sm:text-lg font-medium transition-all duration-200 transform hover:scale-105 disabled:hover:scale-100"
-            >
-              {isSubmitting ? (
-                <>
-                  <div className="animate-spin rounded-full h-4 w-4 sm:h-5 sm:w-5 border-b-2 border-white mr-2"></div>
-                  <span className="text-sm sm:text-base">Envoi en cours...</span>
-                </>
-              ) : (
-                <>
-                  <Send className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
-                  <span className="text-sm sm:text-base">Envoyer ma demande</span>
-                </>
-              )}
-            </Button>
+                <Button
+                  type="submit"
+                  size="lg"
+                  disabled={!isFormValid() || isSubmitting}
+                  className="bg-[#752D8B] hover:bg-[#5a2269] disabled:opacity-50 text-white px-6 sm:px-8 py-2 sm:py-3 text-base sm:text-lg font-medium transition-all duration-200 transform hover:scale-105 disabled:hover:scale-100"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 sm:h-5 sm:w-5 border-b-2 border-white mr-2"></div>
+                      <span className="text-sm sm:text-base">Envoi en cours...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Send className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
+                      <span className="text-sm sm:text-base">Envoyer ma demande</span>
+                    </>
+                  )}
+                </Button>
+              </>
+            )}
 
-            {!isFormValid() && (
+            {!isFormValid() && !submitMessage && (
               <div className="mt-4 p-3 sm:p-4 bg-red-50 border border-red-200 rounded-lg">
                 <p className="text-xs sm:text-sm text-red-700 font-medium mb-2">
                   ⚠️ Informations manquantes
