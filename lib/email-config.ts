@@ -21,8 +21,8 @@ export const CCAS_EMAIL_MAP: Record<string, { email: string | string[]; name: st
     code: "688192"
   },
   "MACOURIA": {
-    // email: "alsainteluce@ccasmacouria.fr",   
-    email: "thomas.awounfouet@gmail.com", 
+    email: "alsainteluce@ccasmacouria.fr",   
+    // email: "thomas.awounfouet@gmail.com", 
     name: "CCAS MACOURIA",
     code: "688547"
   },
